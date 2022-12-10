@@ -1,0 +1,47 @@
+param T integer;
+param Store integer;
+param demand{j in 1..Store};
+param cost{i in 1..T};
+param cap{i in 1..T};
+
+var y{i in 1..T} binary;
+var x{i in 1..T, j in 1..Store} binary;
+
+minimize tot_cost:
+sum{i in 1..T} cost[i]*y[i];
+
+subject to cap_con {i in 1..T} : sum{j in 1..Store} demand[j]*x[i,j] <= cap[i];
+subject to demand_met_by_cap_truck {i in 1..T, j in 1..Store}: x[i,j] <=y[i];
+subject to one_truck_per_store {j in 1..Store} : sum{i in 1..T} x[i,j] =1;
+
+data;
+param  T := 4;
+param Store := 5;
+param cost := 
+1 45 
+2 50 
+3 55 
+4 60;
+param cap := 
+1 400 
+2 500 
+3 600 
+4 1100;
+param demand:= 
+1 100 
+2 200 
+3 300 
+4 500 
+5 800;
+
+option solver gurobi;
+solve;
+
+printf: "Truck allocation:";
+print {i in 1..T}: {j in 1..Store} x[i,j];
+
+printf: "Min cost:";
+print tot_cost;
+
+
+
