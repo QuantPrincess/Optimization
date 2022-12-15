@@ -1,0 +1,28 @@
+reset;
+
+
+param N integer;
+param X integer;
+param eta;
+
+var x{i in 0..N};
+
+minimize execution_cost:
+eta*(((x[0]-x[1])**2)+2*(sum{k in 2..N}(x[k-1]-x[k])**2)); 
+
+subject to total: sum{k in 1..N} (x[k]) = X;
+
+
+data;
+param N := 10;
+param X := 10;
+param eta := .1;
+
+
+
+option solver gurobi;
+solve;
+
+
+printf {k in 0..N}: "%10.7f ", x[k];
+

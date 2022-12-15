@@ -1,0 +1,34 @@
+reset;
+
+
+param N integer;
+param lambda;
+param X integer;
+param eta;
+param sigma;
+
+
+var x{i in 0..N};
+
+
+minimize execution_cost:
+eta*(X-x[1])**2 + 2*eta*(sum{k in 2..N} (x[k-1]-x[k])**2)+ lambda*sigma**2*sum{k in 1..N} x[k]**2;
+
+subject to total: sum{k in 1..N} x[k] = X;
+
+
+data;
+param N := 5;
+param lambda := 0.006;
+param X := 1000000;
+param eta := .000001;
+param sigma := 0.01;
+
+
+option solver gurobi;
+solve;
+
+
+printf {k in 1..2}: "%10.7f ", x[k];
+printf {k in 3..N}: "%10.7f ", x[k];
+
